@@ -26,8 +26,7 @@ public class Main {
                 // TODO: Implement transaction simulation
                 System.out.println("Simulating a transaction for an account needs to be done...");
             } else if (input.equals("4")) {
-                // TODO: Implement customer creation
-                System.out.println("Creating a customer needs to be done...");
+                Customers.createCustomer(scanner);
             } else if (input.equals("5")) {
                 // TODO: Implement CRUD operations for customer accounts
                 System.out.println("CRUD operations for customer accounts need to be done...");
