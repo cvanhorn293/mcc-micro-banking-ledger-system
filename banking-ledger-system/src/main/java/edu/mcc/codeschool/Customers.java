@@ -45,7 +45,6 @@ public class Customers {
         String dbURL = "jdbc:sqlite:banking-ledger-system.db";
 
         try (Connection conn = DriverManager.getConnection(dbURL)) {
-
             try {
                 PreparedStatement prepStatement = conn.prepareStatement(
                         "INSERT INTO customer (name, dob, phone, street_address, city, state, zip_code) VALUES (?, ?, ?, ?, ?, ?, ?)"
