@@ -50,6 +50,18 @@ public class DatabaseUtil {
         }
     }
 
+    public static int executeUpdateOrDelete(String sql, Object... params) throws SQLException {
+        try (Connection conn = getConnection();
+            PreparedStatement prepStatement = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.length; i++) {
+                prepStatement.setObject(i + 1, params[i]);
+            }
+
+            return prepStatement.executeUpdate();
+        }
+    }
+
     @FunctionalInterface
     public interface ResultSetHandler<T> {
         T handle(ResultSet resultSet) throws SQLException;
