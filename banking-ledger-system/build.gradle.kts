@@ -21,3 +21,11 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.withType<JavaExec> {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
+}
+
+tasks.withType<Test> {
+    jvmArgs("--enable-native-access=ALL-UNNAMED")
+}

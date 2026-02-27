@@ -2,9 +2,9 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="banking-ledger-system" target="25" />
-      <module name="banking-ledger-system.main" target="25" />
-      <module name="banking-ledger-system.test" target="25" />
+      <module name="banking-ledger-system" target="24" />
+      <module name="banking-ledger-system.main" target="24" />
+      <module name="banking-ledger-system.test" target="24" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.linked.project.id="banking-ledger-system:test" external.linked.project.path="$MODULE_DIR$/../../banking-ledger-system" external.root.project.path="$MODULE_DIR$/../../banking-ledger-system" external.system.id="GRADLE" external.system.module.group="edu.mcc.codeschool" external.system.module.type="sourceSet" external.system.module.version="1.0-SNAPSHOT" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_24">
     <output-test url="file://$MODULE_DIR$/../../banking-ledger-system/build/classes/java/test" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../banking-ledger-system/src/test">
       <sourceFolder url="file://$MODULE_DIR$/../../banking-ledger-system/src/test/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../banking-ledger-system/src/test/resources" type="java-test-resource" />
     </content>
-    <orderEntry type="jdk" jdkName="openjdk-25" jdkType="JavaSDK" />
+    <orderEntry type="jdk" jdkName="corretto-24" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="banking-ledger-system.main" />
     <orderEntry type="library" name="Gradle: org.xerial:sqlite-jdbc:3.51.2.0" level="project" />

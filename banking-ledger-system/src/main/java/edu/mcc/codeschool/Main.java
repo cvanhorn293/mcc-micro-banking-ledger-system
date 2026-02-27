@@ -28,8 +28,7 @@ public class Main {
             } else if (input.equals("4")) {
                 Customers.createCustomer(scanner);
             } else if (input.equals("5")) {
-                // TODO: Implement CRUD operations for customer accounts
-                System.out.println("CRUD operations for customer accounts need to be done...");
+                Accounts.crudAccounts(scanner);
             } else if (input.equals("6")) {
                 // TODO: Implement deposit/withdrawal functionality
                 System.out.println("Deposit/Withdrawal functionality needs to be done...");

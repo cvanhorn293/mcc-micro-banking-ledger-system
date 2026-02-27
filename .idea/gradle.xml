@@ -4,7 +4,7 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/banking-ledger-system" />
-        <option name="gradleHome" value="" />
+        <option name="gradleJvm" value="corretto-24" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/banking-ledger-system" />
