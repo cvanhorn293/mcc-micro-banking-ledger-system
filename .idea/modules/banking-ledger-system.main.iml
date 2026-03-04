@@ -10,5 +10,7 @@
     <orderEntry type="jdk" jdkName="corretto-24" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: org.xerial:sqlite-jdbc:3.51.2.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.13.2" level="project" />
+    <orderEntry type="library" name="Gradle: com.google.errorprone:error_prone_annotations:2.41.0" level="project" />
   </component>
 </module>

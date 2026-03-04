@@ -17,21 +17,17 @@ public class Main {
             if (input.equalsIgnoreCase("X")) {
                 break;
             } else if (input.equals("1")) {
-                // TODO: Implement statement generation
-                System.out.println("Generating statement needs to be done...");
+                Reports.generateStatement(scanner);
             } else if (input.equals("2")) {
-                // TODO: Implement accounting report generation
-                System.out.println("Generating accounting reports needs to be done...");
+                Reports.generateAccountingReport(scanner);
             } else if (input.equals("3")) {
-                // TODO: Implement transaction simulation
-                System.out.println("Simulating a transaction for an account needs to be done...");
+                Transactions.simulateTransaction(scanner);
             } else if (input.equals("4")) {
                 Customers.createCustomer(scanner);
             } else if (input.equals("5")) {
                 Accounts.crudAccounts(scanner);
             } else if (input.equals("6")) {
-                // TODO: Implement deposit/withdrawal functionality
-                System.out.println("Deposit/Withdrawal functionality needs to be done...");
+                Transactions.depositOrWithdraw(scanner);
             }
         }
 

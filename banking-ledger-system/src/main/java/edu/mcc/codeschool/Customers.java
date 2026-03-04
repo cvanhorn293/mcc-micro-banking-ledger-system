@@ -4,6 +4,7 @@ import edu.mcc.codeschool.objects.Customer;
 import edu.mcc.codeschool.utils.DatabaseUtil;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Customers {
@@ -44,7 +45,8 @@ public class Customers {
     }
 
     public static void putCustomerInfo(Customer customer) {
-        String putCustomerQuery = "INSERT INTO customer (name, dob, phone, street_address, city, state, zip_code) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String putCustomerQuery = "INSERT INTO customer (name, dob, phone, street_address, city, state, zip_code, created_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        LocalDate date = LocalDate.now();
 
         try {
             DatabaseUtil.executeInsert(putCustomerQuery, rs -> {
@@ -59,13 +61,11 @@ public class Customers {
                 customer.getAddress(),
                 customer.getCity(),
                 customer.getState(),
-                customer.getZipCode());
+                customer.getZipCode(),
+                date);
 
         } catch (SQLException e) {
             System.err.println(customer.getName() + " already exists and couldn't be created. Going back to main menu...\n");
         }
     }
 }
-
-
-

@@ -1,9 +1,11 @@
 package edu.mcc.codeschool.objects;
 
+import java.math.BigDecimal;
+
 public class Account {
     private Integer accountID;
     private Integer CustomerID;
-    private Double balance;
+    private BigDecimal balance;
     private String name;
     private Long accountNumber;
     private String customerName;
@@ -26,11 +28,11 @@ public class Account {
         return this;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public Account setBalance(Double balance) {
+    public Account setBalance(BigDecimal balance) {
         this.balance = balance;
         return this;
     }

@@ -2,7 +2,7 @@ package edu.mcc.codeschool;
 
 import edu.mcc.codeschool.objects.Account;
 import edu.mcc.codeschool.utils.DatabaseUtil;
-import edu.mcc.codeschool.utils.ErrorUtil;
+import edu.mcc.codeschool.utils.ErrorHandlingUtil;
 
 import java.sql.SQLException;
 import java.util.concurrent.ThreadLocalRandom;
@@ -23,18 +23,10 @@ public class Accounts {
         } else {
             System.out.println("Invalid selection. Going back to main menu...");
         }
-
     }
 
-    public static void createAccount(Scanner input, Account account) {
-        System.out.print("Enter the customer name: ");
-        account.setCustomerName(input.nextLine());
-
-        // Check if customer exists
-        if (!ErrorUtil.checkExisting("customer", "name", account.getCustomerName())) {
-            System.out.println("\nCustomer not found. Please try again.\n");
-            createAccount(input, account);
-        }
+    private static void createAccount(Scanner input, Account account) {
+        while (ErrorHandlingUtil.getAndCheckCustomerName(input, account));
 
         System.out.print("Enter the account name: ");
         account.setName(input.nextLine());
@@ -43,37 +35,22 @@ public class Accounts {
         createAccountQuery(account);
     }
 
-    public static void updateAccount(Scanner input, Account account) {
-        System.out.print("Enter the customer's account number: ");
-        account.setAccountNumber(input.nextLong());
-        input.nextLine();
-
-        if (!ErrorUtil.checkExisting("account", "account_number", account.getAccountNumber())) {
-            System.out.println("\nAccount not found. Please try again.\n");
-            updateAccount(input, account);
-        }
+    private static void updateAccount(Scanner input, Account account) {
+        while (ErrorHandlingUtil.getAndCheckAccountNumber(input, account));
 
         System.out.print("Enter the new account name: ");
         account.setName(input.nextLine());
 
         updateAccountQuery(account);
+
     }
 
-    public static void deleteAccount(Scanner input, Account account) {
-        System.out.print("Please enter the customer's account number: ");
-        account.setAccountNumber(input.nextLong());
-        input.nextLine();
-
-        if (!ErrorUtil.checkExisting("account", "account_number", account.getAccountNumber())) {
-            System.out.println("\nAccount not found. Please try again.\n");
-            deleteAccount(input, account);
-        }
-
+    private static void deleteAccount(Scanner input, Account account) {
+        while (ErrorHandlingUtil.getAndCheckAccountNumber(input, account));
         deleteAccountQuery(account);
-
     }
 
-    public static void createAccountQuery(Account account) {
+    private static void createAccountQuery(Account account) {
         String createAccountQuery = "INSERT INTO account (customer_ID, name, account_number, balance) VALUES ((SELECT customer_id FROM customer WHERE name = ?), ?, ?, 0.00)";
 
         try {
@@ -91,7 +68,7 @@ public class Accounts {
         }
     }
 
-    public static void updateAccountQuery(Account account) {
+    private static void updateAccountQuery(Account account) {
         String updateAccountQuery = "UPDATE account SET name = ? WHERE account_number = ?";
 
         try {
@@ -102,7 +79,7 @@ public class Accounts {
         }
     }
 
-    public static void deleteAccountQuery(Account account) {
+    private static void deleteAccountQuery(Account account) {
         String deleteAccountQuery = "DELETE FROM account WHERE account_number = ?";
 
         try {
@@ -113,8 +90,8 @@ public class Accounts {
         }
     }
 
-    public static String accountOptionSelection(Scanner input) {
-        System.out.println("What would you like to do?");
+    private static String accountOptionSelection(Scanner input) {
+        System.out.println("\nWhat would you like to do?");
         System.out.println("C - Create an account");
         System.out.println("U - Update an account");
         System.out.println("D - Delete an account");
@@ -123,7 +100,7 @@ public class Accounts {
         return input.nextLine();
     }
 
-    public static Long generateAccountNumber() {
+    private static Long generateAccountNumber() {
         long min = 1000000000000000L;
         long max = 9999999999999999L;
 
