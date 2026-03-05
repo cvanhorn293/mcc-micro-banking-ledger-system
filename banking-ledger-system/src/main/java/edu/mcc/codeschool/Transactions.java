@@ -9,13 +9,13 @@ import edu.mcc.codeschool.utils.ErrorHandlingUtil;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Scanner;
@@ -68,10 +68,12 @@ public class Transactions {
     }
 
     private static void transactionSimQuery(Transaction transaction) {
-        String sql = "INSERT INTO transactions (transaction_id, account_id, amount, type, merchant_name, merchant_type, date_time) VALUES (?, (SELECT account_id FROM account WHERE account_number = ?), ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO transactions (transaction_id, account_id, amount, type, merchant_name, merchant_type, date_time) VALUES (?, (SELECT account_id FROM account WHERE account_number = ?), ROUND(?, 2), ?, ?, ?, ?)";
         String dateTime = getDate();
 
         try {
+            BigDecimal roundedAmount = transaction.getAmount().setScale(2, RoundingMode.HALF_UP);
+
             DatabaseUtil.executeInsert(sql, rs -> {
                 if (rs.next()) {
                     System.out.println("\nTransaction simulated...");
@@ -79,7 +81,7 @@ public class Transactions {
                 return null;
             },  transaction.getTransactionID(),
                 transaction.getId(),
-                transaction.getAmount(),
+                roundedAmount,
                 transaction.getTransactionType(),
                 transaction.getMerchantName(),
                 transaction.getMerchantType(),
@@ -95,11 +97,11 @@ public class Transactions {
 
         if (Objects.equals(transaction.getTransactionType(), "DEBIT")) {
             sql = "UPDATE account " +
-                    "SET balance = balance + ? " +
+                    "SET balance = ROUND(balance + ?, 2) " +
                     "WHERE account_number = (SELECT account_number FROM account WHERE account_id = (SELECT account_id FROM transactions WHERE transaction_id = ?))";
         } else if (Objects.equals(transaction.getTransactionType(), "CREDIT")) {
             sql = "UPDATE account " +
-                    "SET balance = balance - ? " +
+                    "SET balance = ROUND(balance - ?, 2) " +
                     "WHERE account_number = (SELECT account_number FROM account WHERE account_id = (SELECT account_id FROM transactions WHERE transaction_id = ?))";
         } else {
             System.out.println("Unknown transaction type: " + transaction.getTransactionType());
@@ -107,7 +109,8 @@ public class Transactions {
         }
 
         try {
-            DatabaseUtil.executeUpdateOrDelete(sql, transaction.getAmount(), transaction.getTransactionID());
+            BigDecimal roundedAmount = transaction.getAmount().setScale(2, RoundingMode.HALF_UP);
+            DatabaseUtil.executeUpdateOrDelete(sql, roundedAmount, transaction.getTransactionID());
         } catch (SQLException e) {
             System.out.println("Error updating balance after transaction: " + e.getMessage());
         }
@@ -170,27 +173,29 @@ public class Transactions {
     }
 
     public static BigDecimal getExistingBalance(Account account) {
-        String sql = "SELECT balance FROM account WHERE account_number = ?";
+        String sql = "SELECT ROUND(balance, 2) as balance FROM account WHERE account_number = ?";
 
         try {
             return DatabaseUtil.executeQuery(sql, rs -> {
                 if (rs.next()) {
-                    return rs.getBigDecimal("balance");
+                    BigDecimal balance = rs.getBigDecimal("balance");
+                    return balance != null ? balance.setScale(2, RoundingMode.HALF_UP) : new BigDecimal("0.00");
                 }
-                return new BigDecimal("0.0");
+                return new BigDecimal("0.00");
             }, account.getAccountNumber());
 
         } catch (SQLException e) {
             System.out.println("Error retrieving account balance: " + e.getMessage());
-            return new BigDecimal("0.0");
+            return new BigDecimal("0.00");
         }
     }
 
     private static void updateBalance(Account account, BigDecimal newBalance) {
-        String sql = "UPDATE account SET balance = ? WHERE account_number = ?";
+        String sql = "UPDATE account SET balance = ROUND(?, 2) WHERE account_number = ?";
 
         try {
-            DatabaseUtil.executeUpdateOrDelete(sql, newBalance, account.getAccountNumber());
+            BigDecimal roundedBalance = newBalance.setScale(2, RoundingMode.HALF_UP);
+            DatabaseUtil.executeUpdateOrDelete(sql, roundedBalance, account.getAccountNumber());
         } catch (SQLException e) {
             System.out.println("Error updating account balance: " + e.getMessage());
         }
