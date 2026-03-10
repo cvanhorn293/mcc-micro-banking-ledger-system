@@ -136,6 +136,10 @@ public class Reports {
         Integer accounts = getTotalAccounts();
         BigDecimal totalBalance = getAccountingBalance();
 
+        if (totalBalance == null) {
+            totalBalance = new BigDecimal("0.00");
+        }
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath + "accounting_report.txt"))) {
             writer.write("MCC Code School Bank Accounting Report");
             writer.newLine();
