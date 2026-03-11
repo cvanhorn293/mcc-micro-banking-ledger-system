@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.UUID;
+
 import com.google.gson.Gson;
 
 public class Transactions {
@@ -34,6 +36,8 @@ public class Transactions {
         getTransactionAPI(account, transaction);
         transactionSimQuery(transaction);
         setBalanceAfterTransaction(transaction);
+
+        System.out.println("\nTransaction simulated...");
 
     }
 
@@ -75,9 +79,7 @@ public class Transactions {
             BigDecimal roundedAmount = transaction.getAmount().setScale(2, RoundingMode.HALF_UP);
 
             DatabaseUtil.executeInsert(sql, rs -> {
-                if (rs.next()) {
-                    System.out.println("\nTransaction simulated...");
-                }
+                rs.next();
                 return null;
             },  transaction.getTransactionID(),
                 transaction.getId(),
@@ -118,6 +120,7 @@ public class Transactions {
 
     public static void depositOrWithdraw(Scanner input) {
         Account account = new Account();
+        Transaction transaction = new Transaction();
 
         System.out.println("D - Deposit Funds");
         System.out.println("W - Withdraw Funds");
@@ -126,37 +129,47 @@ public class Transactions {
         String selection = input.nextLine();
 
         if (selection.equalsIgnoreCase("D")) {
-            depositFunds(account, input);
+            depositFunds(account, transaction, input);
         } else if (selection.equalsIgnoreCase("W")) {
-            withdrawFunds(account, input);
+            withdrawFunds(account, transaction, input);
         } else {
             System.out.println("Invalid selection. Please try again.");
             depositOrWithdraw(input);
         }
     }
 
-    private static void depositFunds(Account account, Scanner input) {
+    private static void depositFunds(Account account, Transaction transaction, Scanner input) {
         while (ErrorHandlingUtil.getAndCheckAccountNumber(input, account));
 
         System.out.print("Enter the amount to deposit: ");
-        BigDecimal amount = new BigDecimal(input.nextLine());
 
+        BigDecimal amount = new BigDecimal(input.nextLine());
         BigDecimal existingBalance = getExistingBalance(account);
         BigDecimal newBalance = existingBalance.add(amount);
 
-        updateBalance(account, newBalance);
+        transaction
+            .setTransactionType("DEBIT")
+            .setMerchantName("Deposit")
+            .setMerchantType("Deposit");
+        setTransactionData(account, transaction, amount, newBalance, account.getAccountNumber());
 
         System.out.println("\nDeposited $" + amount + " to account number " + account.getAccountNumber());
         System.out.println("Total balance: $" + newBalance.toPlainString());
     }
 
-    private static void withdrawFunds(Account account, Scanner input) {
+    private static void withdrawFunds(Account account, Transaction transaction, Scanner input) {
         while (ErrorHandlingUtil.getAndCheckAccountNumber(input, account));
 
-        System.out.print("Enter the amount to withdraw: ");
-        BigDecimal amount = new BigDecimal(input.nextLine());
-
         BigDecimal existingBalance = getExistingBalance(account);
+
+        if (existingBalance.compareTo(BigDecimal.ZERO) <= 0) {
+            System.out.println("\nAccount has a balance of $0.00. Unable to withdraw any money. Returning to main menu...");
+            return;
+        }
+
+        System.out.print("Enter the amount to withdraw: ");
+
+        BigDecimal amount = new BigDecimal(input.nextLine());
 
         while (amount.compareTo(existingBalance) > 0) {
             System.out.println("\nInsufficient funds, current available balance is: $" + existingBalance);
@@ -165,11 +178,27 @@ public class Transactions {
         }
 
         BigDecimal newBalance = existingBalance.subtract(amount);
-        updateBalance(account, newBalance);
+
+        transaction
+            .setTransactionType("CREDIT")
+            .setMerchantName("Withdrawal")
+            .setMerchantType("Withdrawal");
+        setTransactionData(account, transaction, amount, newBalance, account.getAccountNumber());
 
         System.out.println("\nWithdrew $" + amount + " from account number " + account.getAccountNumber());
         System.out.println("Total balance: $" + newBalance);
         System.out.println("Give that bitch their money foo.");
+    }
+
+    private static void setTransactionData(Account account, Transaction transaction, BigDecimal amount, BigDecimal newBalance, Long accountNum) {
+        String transactionID = createTransactionID();
+
+        transaction.setTransactionID(transactionID);
+        transaction.setId(accountNum);
+        transaction.setAmount(amount);
+
+        transactionSimQuery(transaction);
+        updateBalance(account, newBalance);
     }
 
     public static BigDecimal getExistingBalance(Account account) {
@@ -204,5 +233,9 @@ public class Transactions {
     public static String getDate() {
         LocalDate date = LocalDate.now();
         return date.format(DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+    }
+
+    private static String createTransactionID() {
+        return UUID.randomUUID().toString();
     }
 }

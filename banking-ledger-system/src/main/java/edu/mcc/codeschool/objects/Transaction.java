@@ -6,7 +6,7 @@ public class Transaction {
     private String transactionId;
     private String transactionType;
     private BigDecimal amount;
-    private String id;
+    private Long id;
     private String merchantName;
     private String merchantType;
 
@@ -37,11 +37,11 @@ public class Transaction {
         return this;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public Transaction setId(String id) {
+    public Transaction setId(Long id) {
         this.id = id;
         return this;
     }
